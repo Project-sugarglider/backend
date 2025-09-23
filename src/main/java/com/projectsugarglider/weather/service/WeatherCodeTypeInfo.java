@@ -11,6 +11,9 @@ import com.projectsugarglider.weather.repository.WeatherCodeTypeRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * Weather(기상청) 기본정보 저장용 서비스.
+ */
 @Slf4j
 @Service
 @RequiredArgsConstructor

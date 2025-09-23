@@ -11,6 +11,9 @@ import com.projectsugarglider.weather.dto.ShortTimeForecastDto;
 
 import lombok.RequiredArgsConstructor;
 
+/**
+ * Werather(기상청) 단기예보 조회용 API 어댑터.
+ */
 @Service
 @RequiredArgsConstructor
 public class ShortTimeForecastApi{

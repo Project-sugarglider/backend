@@ -20,6 +20,9 @@ import com.projectsugarglider.weather.repository.ShortTimeForecastRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * Weather(기상청) 단기예보 저장용 서비스.
+ */
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -31,17 +34,17 @@ public class ShortTimeForecastService {
     private static final DateTimeFormatter     YYYYMMDD = DateTimeFormatter.ofPattern("yyyyMMdd");
 
     /**
-     * 주어진 위치에 대해 “오늘 기준 +4일 00시” 데이터가 없다면
-     * 누락된 부분만 API로 채워서 저장한다.
+     * 지역 데이터를 받아 단기예보를 저장합니다.
+     * 
+     * @param loc
      */
     @Transactional
     public void saveAllShortTimeForecast(LocationDto loc) {
-        // 1. KST 현재 시각, +4일 00:00 타겟
+
         OffsetDateTime now     = dateTime.kstNow();
         OffsetDateTime target  = dateTime.kstPlusDays(4)
                                     .withHour(0).withMinute(0).withSecond(0).withNano(0);
 
-        // 2. 타겟 시각 데이터가 이미 있으면 스킵
         if (existsAt(target, loc)) {
             return;
         }
@@ -49,16 +52,19 @@ public class ShortTimeForecastService {
         Set<String> existing = new HashSet<>(
             repo.findAllTimeKeysByLocation(loc.lowerCode(), loc.upperCode()));
 
-
-        // 3. 지금까지 저장된 마지막 시각 (없으면 오늘 02:00)
         OffsetDateTime lastSaved = findLastSaved(loc)
             .orElseGet(() -> now.withHour(2).withMinute(0).withSecond(0).withNano(0));
 
-        // 4. API 호출 → DTO 리스트
         String todayParam = now.format(YYYYMMDD);
+
         List<ShortTimeForecastDto> dtos = api.forecastCall(loc.nx(), loc.ny(), todayParam);
 
-        // 5. DTO 중에서 “(lastSaved, target)” 구간만 골라서 Entity로 변환
+        /*
+         * Batch Size를 줄이기 위한 최적화
+         * 
+         * Save로 모든 데이터를 업데이트 하는것이 아닌
+         * 비어있는 데이터만 저장합니다.
+         */
         List<ShortTimeForecastEntity> toSave = dtos.stream()
             .filter(dto -> {
                 String key = dto.fcstDate() + dto.fcstTime();
@@ -67,7 +73,6 @@ public class ShortTimeForecastService {
             .map(dto -> dto.toEntity(dto, loc))
             .toList();
 
-        // 6. 저장
         if (!toSave.isEmpty()) {
             repo.saveAll(toSave);
             log.info("▶ 누락 보충 저장: {}건 (loc={}, from={} to={})",

@@ -15,6 +15,9 @@ import com.projectsugarglider.weather.service.WeatherCodeTypeInfo;
 
 import lombok.RequiredArgsConstructor;
 
+/**
+ * Weather(기상청) 기본 컨트롤러.
+ */
 @RestController
 @RequestMapping("/Weather")
 @RequiredArgsConstructor
@@ -24,11 +27,26 @@ public class WeatherController {
     private final WeatherCodeTypeInfo info;
     private final CodeToLocationDto codeToLocationDto;
 
+
+    /**
+     * 기상청 기본데이터를 업데이트합니다.
+     * 
+     * @return 데이터 저장 완료 메시지
+     * @throws JsonProcessingException
+     */
     @PostMapping("/BasicDataUpdate")
     public ResponseEntity<String> basicDataUpdate() throws JsonProcessingException{
         info.insertData();
         return ResponseEntity.ok("기본데이터 업데이트 성공");
     }
+
+    /**
+     * 기상청 단기예보 데이터를 업데이트합니다.
+     * 
+     * /Weather/BasicDataUpdate를 선행해야 합니다.
+     * 
+     * @return 데이터 저장 완료 메시지
+     */
 
     @PostMapping("/ShortForecast")
     public ResponseEntity<String> basicDataUpdate(

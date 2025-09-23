@@ -11,6 +11,9 @@ import com.projectsugarglider.kepco.dto.KepcoUsageDto;
 
 import lombok.RequiredArgsConstructor;
 
+/**
+ * KEPCO(한전) 전력 사용량 조회용 API 어댑터.
+ */
 @Service
 @RequiredArgsConstructor
 public class UsageDataApi {
@@ -23,6 +26,11 @@ public class UsageDataApi {
 
     private final GenericExternalApiService apiService;
 
+    /**
+     * 전력 사용량 데이터를 호출합니다.
+     * 
+     * @return 전력 사용량 데이터
+     */
     public List<KepcoUsageDto> usageDataCall(
         String year,
         String month,

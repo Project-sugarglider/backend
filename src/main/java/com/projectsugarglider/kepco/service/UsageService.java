@@ -19,6 +19,9 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * KEPCO(한전) 전력 사용량 데이터 서비스.
+ */
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -30,6 +33,9 @@ public class UsageService {
     private final DateTime                      dateTime;
     private final ApiNameFix                    nameFix;
 
+    /**
+     * KEPCO(한전) 전력 사용량 데이터 저장 서비스.
+     */
     @Transactional
     public void insertUsageKepcoData() {
         
@@ -57,6 +63,10 @@ public class UsageService {
             .map(dto -> dto.toUsageEntity(year, month, nameFix))
             .toList();
     }
+    
+    /**
+     * KEPCO(한전) 작년 같은달의 데이터 호출 서비스.
+     */
     @Cacheable(
       value = "lastYearUsage",
       key = "'KepcoUsageCall'"
