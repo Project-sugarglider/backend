@@ -12,6 +12,9 @@ import com.projectsugarglider.front.dto.KakaoPlace;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * Kakao(카카오) 지역 데이터 호출용 Api 어댑터
+ */
 @Service
 @Slf4j
 @RequiredArgsConstructor

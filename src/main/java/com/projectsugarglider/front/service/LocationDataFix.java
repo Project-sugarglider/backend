@@ -15,6 +15,10 @@ import com.projectsugarglider.util.service.ApiNameFix;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+//TODO : 로직 점검 및 함수 정리
+/**
+ * 부족한 데이터를 보충하고, fix하는 서비스
+ */
 @Slf4j
 @Service
 @RequiredArgsConstructor

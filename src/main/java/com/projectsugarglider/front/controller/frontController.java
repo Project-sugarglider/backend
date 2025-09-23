@@ -15,16 +15,14 @@ import com.projectsugarglider.front.dto.TemperatureResponseDto;
 import com.projectsugarglider.front.service.KcaCallHistoryCheck;
 import com.projectsugarglider.front.service.LocationDataInsert;
 import com.projectsugarglider.front.service.WeatherCallHistoryCheck;
-import com.projectsugarglider.front.service.kcaPriceResponseService;
-import com.projectsugarglider.kca.service.KcaPriceService;
 import com.projectsugarglider.kca.service.KcaStoreInfoResponseService;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * Front Page 반환용 컨트롤러
+ */
 @Controller
 @Slf4j
 @RequiredArgsConstructor
@@ -34,21 +32,28 @@ public class frontController{
     private final KcaStoreInfoResponseService storeInfo;
     private final WeatherCallHistoryCheck check;
     private final KcaCallHistoryCheck kcaCheck;
-    private final kcaPriceResponseService kca;
-    private final KcaPriceService price;
 
-    @Data @NoArgsConstructor @AllArgsConstructor
-    public static class RegionPickRequest { private String upper; private String lower; }
-    
+    public record RegionPickRequest (String upper,  String lower) {}
     public record EntpReq(String entpId) {}
 
+    /**
+     * Front Main Page
+     * 
+     * @param model
+     * @return
+     */
     @GetMapping("/")
     public String main(Model model) {
 
         return "main"; 
     }
 
-
+    /**
+     * Front Weather(일기예보) Page
+     * 
+     * @param model
+     * @return
+     */
     @GetMapping("/weather")
     public String dashboard(Model model) {
 
@@ -65,6 +70,12 @@ public class frontController{
         return "weather"; 
     }
 
+    /**
+     * 선택된 지역의 일기예보 데이터 반환
+     * 
+     * @param req
+     * @return
+     */
     @ResponseBody
     @PostMapping("/api/chart/tmp")
     public TemperatureResponseDto temperature(@RequestBody RegionPickRequest req){
@@ -72,6 +83,12 @@ public class frontController{
         return check.service(req.upper,req.lower);
     }
 
+    /**
+     * 지도에서 선택된 업체의 판매물품 데이터 반환
+     * 
+     * @param req
+     * @return
+     */
     @ResponseBody
     @PostMapping("/api/table/KcaPriceInfoByEntpId")
     public List<KcaPriceResponseDto> priceInfo(@RequestBody EntpReq req){
@@ -79,6 +96,12 @@ public class frontController{
         return kcaCheck.service(req.entpId);
     }
 
+    /**
+     * 생필품 가계정보 반환
+     * 
+     * @param req
+     * @return
+     */
     @ResponseBody
     @PostMapping("/api/table/map")
     public List<KcaStoreInfoResponseDto> storeLocationInfo(@RequestBody RegionPickRequest req){
@@ -86,6 +109,12 @@ public class frontController{
         return storeInfo.service(req.upper, req.lower);
     }
 
+    /**
+     * Front Kca(생필품) Page
+     * 
+     * @param model
+     * @return
+     */
     @GetMapping("/kca")
     public String kepco(Model model) {
 

@@ -13,6 +13,9 @@ import com.projectsugarglider.weather.service.ShortTimeForecastService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
+/**
+ * 일기예보 캐싱 서비스
+ */
 @Service
 @RequiredArgsConstructor
 public class WeatherCallHistoryCheck {

@@ -13,6 +13,9 @@ import com.projectsugarglider.util.service.DateTime;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
+/**
+ * 업체정보에 맞는 생필품 캐싱 서비스
+ */
 @Service
 @RequiredArgsConstructor
 public class KcaCallHistoryCheck {
@@ -24,11 +27,11 @@ public class KcaCallHistoryCheck {
 
     @Transactional
     public List<KcaPriceResponseDto> service(String entpId){
-        String now = time.kstNowYYYYMMDD();
+        String kcaCallDay = time.kstNowYYYYMMDD();
 
-        if(!repo.existsByKcaCallDayAndEntpId(entpId, entpId)){
+        if(!repo.existsByKcaCallDayAndEntpId(kcaCallDay, entpId)){
             KcaCallHistory DTO = KcaCallHistory.builder()
-            .kcaCallDay(now)
+            .kcaCallDay(kcaCallDay)
             .entpId(entpId)
             .build();
 
