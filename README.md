@@ -57,37 +57,8 @@ src/main/java/com/projectsugarglider
 - 반복 조회 API 응답 속도 개선, DB 부하 완화  
 
 ### 5. 에러 처리
-- 글로벌 예외 핸들러(@ControllerAdvice)  
 - 공통 응답 포맷(JSON)으로 클라이언트 일관성 확보  
 
----
-
-## 📑 API 예시
-
-### 오늘의 데이터 조회
-```
-GET /api/v1/today?region=서울특별시&city=종로구
-```
-
-**응답 예시**
-```json
-{
-  "region": "서울특별시",
-  "city": "종로구",
-  "weather": {
-    "temp": "27.1",
-    "condition": "맑음"
-  },
-  "electricity": {
-    "usage": 350,
-    "bill": 45000
-  },
-  "products": [
-    { "name": "라면", "price": 950 },
-    { "name": "계란", "price": 6580 }
-  ]
-}
-```
 
 ---
 
