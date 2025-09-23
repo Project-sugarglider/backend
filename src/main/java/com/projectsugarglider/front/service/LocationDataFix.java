@@ -162,6 +162,7 @@ public class LocationDataFix {
     
 
     // ----------------- 상위: 가져오기 순서 유지 -----------------
+    @Transactional
     public void service() {
         List<KcaStoreInfoEntity> db = storeRepo.findAll(); 
     
@@ -237,7 +238,6 @@ public class LocationDataFix {
         return (list != null) ? list : List.of();
     }
     
-    @Transactional
     private boolean method(KcaStoreInfoEntity record, KakaoPlace raw) {
         storeRepo.updateMapCoordByEntpNameAndPlmkAddrBasic(
             record.getEntpName(),
