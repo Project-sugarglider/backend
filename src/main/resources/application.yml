@@ -1,23 +1,26 @@
 external:
   publicapi:
-    apiKey: "XM38b9NRI3rme90bFEAXkx5tMhliHgoaAChXa7hA3BtVsmRzGKmrNkp7A9tILINENoYFQq9qEQqRi2Ln%2BtmPSQ%3D%3D"
+    apiKey: ${PUBLIC_API_KEY}
+
   kepco:
-    kepcokey: 0m82zd7ldQA89hapC6WOZocz08R1ut5fg7UJ68rb
+    kepcokey: ${KEPCO_API_KEY}
     defaultCodeTy: cityCd
     basedataurl: https://bigdata.kepco.co.kr/openapi/v1/commonCode.do
     usagedataurl: https://bigdata.kepco.co.kr/openapi/v1/powerUsage/houseAve.do
+
   kca:
     basedataurl: http://openapi.price.go.kr/openApiImpl/ProductPriceInfoService/getStandardInfoSvc.do
-    totaldiv : http://openapi.price.go.kr/openApiImpl/ProductPriceInfoService/getStandardInfoSvc.do
-    storeinfo : http://openapi.price.go.kr/openApiImpl/ProductPriceInfoService/getStoreInfoSvc.do?
-    productinfo : http://openapi.price.go.kr/openApiImpl/ProductPriceInfoService/getProductInfoSvc.do?
-    priceinfo : http://openapi.price.go.kr/openApiImpl/ProductPriceInfoService/getProductPriceInfoSvc.do?
+    totaldiv: http://openapi.price.go.kr/openApiImpl/ProductPriceInfoService/getStandardInfoSvc.do
+    storeinfo: http://openapi.price.go.kr/openApiImpl/ProductPriceInfoService/getStoreInfoSvc.do?
+    productinfo: http://openapi.price.go.kr/openApiImpl/ProductPriceInfoService/getProductInfoSvc.do?
+    priceinfo: http://openapi.price.go.kr/openApiImpl/ProductPriceInfoService/getProductPriceInfoSvc.do?
+
   weather:
     shorttime: http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getVilageFcst
+
   kakao:
     searchkeyword: https://dapi.kakao.com/v2/local/search/keyword
-    restKey:  KakaoAK badc576c93e52619a2f44f382b852f0a
-  
+    restKey: ${KAKAO_REST_KEY}
 
 spring:
   jpa:
@@ -31,10 +34,6 @@ spring:
         order_inserts: true
         order_updates: true
 
-  redis:
-    host: localhost   
-    port: 6379        
-
   cache:
     type: redis
 
@@ -43,4 +42,3 @@ spring:
     locations: classpath:db/migration
     baseline-on-migrate: true
     baseline-version: 0
-
