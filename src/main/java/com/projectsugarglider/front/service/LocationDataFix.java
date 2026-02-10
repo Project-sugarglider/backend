@@ -238,14 +238,45 @@ public class LocationDataFix {
         return (list != null) ? list : List.of();
     }
     
+    private static boolean looksLikeLat(double v) {
+        return v >= 33.0 && v <= 43.0;   // 한국 위도 대충 범위
+    }
+    
+    private static boolean looksLikeLng(double v) {
+        return v >= 124.0 && v <= 132.0; // 한국 경도 대충 범위
+    }
+    
     private boolean method(KcaStoreInfoEntity record, KakaoPlace raw) {
+
+        String x = raw.x();
+        String y = raw.y();
+    
+        try {
+            double xd = Double.parseDouble(x);
+            double yd = Double.parseDouble(y);
+    
+            // 정상 규칙: x=경도(126.xx), y=위도(37.xx)
+            // 만약 x가 위도처럼(37) 보이고 y가 경도처럼(126) 보이면 스왑
+            if (looksLikeLat(xd) && looksLikeLng(yd)) {
+                String tmp = x;
+                x = y;
+                y = tmp;
+                log.warn("좌표 스왑 보정: entp='{}' raw=({}, {}) -> fixed=({}, {})",
+                        record.getEntpName(), raw.x(), raw.y(), x, y);
+            }
+        } catch (Exception e) {
+            log.warn("좌표 파싱 실패: entp='{}' raw=({}, {})", record.getEntpName(), raw.x(), raw.y(), e);
+            // 파싱 실패면 그냥 원본으로 업데이트 시도(혹은 false 리턴해서 실패 처리해도 됨)
+        }
+    
         storeRepo.updateMapCoordByEntpNameAndPlmkAddrBasic(
             record.getEntpName(),
             record.getPlmkAddrBasic(),
-            raw.x(),
-            raw.y()
+            x,
+            y
         );
-        log.info("업데이트 성공: entp='{}' -> ({}, {})", record.getEntpName(), raw.x(), raw.y());
+    
+        log.info("업데이트 성공: entp='{}' -> ({}, {})", record.getEntpName(), x, y);
         return true;
     }
     

@@ -12,6 +12,7 @@ import org.springframework.ui.Model;
 
 import com.projectsugarglider.datainitialize.entity.LowerLocationEntity;
 import com.projectsugarglider.datainitialize.repository.LowerLocationCodeRepository;
+import com.projectsugarglider.front.dto.RegionInitResponseDto;
 
 import lombok.RequiredArgsConstructor;
 
@@ -120,5 +121,17 @@ public class LocationDataInsert {
             );
             return all;
         }
+    public RegionInitResponseDto regionInit(){
+        List<LowerLocationEntity> all = getAll();
+        List<String> upperCodes = getUpperCodes(all);
+        List<Map<String, String>> upperList = getUpperList(upperCodes);
+        Map<String, List<Map<String, String>>> lowersByUpper = getLowersByUpper(all);
+
+        String selectedUpper = getSelectedUpper(upperCodes);
+        String selectedLower = getSelectedLower(lowersByUpper, selectedUpper);
+
+        return new RegionInitResponseDto(upperList, lowersByUpper, selectedUpper, selectedLower);
+}
+
     
 }
