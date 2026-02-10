@@ -264,7 +264,7 @@ public class LocationDataFix {
                 log.warn("좌표 스왑 보정: entp='{}' raw=({}, {}) -> fixed=({}, {})",
                         record.getEntpName(), raw.x(), raw.y(), x, y);
             }
-        } catch (Exception e) {
+        } catch (NumberFormatException e) {
             log.warn("좌표 파싱 실패: entp='{}' raw=({}, {})", record.getEntpName(), raw.x(), raw.y(), e);
             // 파싱 실패면 그냥 원본으로 업데이트 시도(혹은 false 리턴해서 실패 처리해도 됨)
         }
