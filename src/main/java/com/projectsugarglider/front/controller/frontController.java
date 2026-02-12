@@ -89,6 +89,7 @@ public class frontController{
      * @param req
      * @return
      */
+    // TODO: 상품의 종류, 검색기능 추가
     @ResponseBody
     @PostMapping("/api/table/KcaPriceInfoByEntpId")
     public List<KcaPriceResponseDto> priceInfo(@RequestBody EntpReq req){
