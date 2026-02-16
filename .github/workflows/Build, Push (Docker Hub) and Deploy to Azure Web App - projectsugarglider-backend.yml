@@ -1,0 +1,52 @@
+name: Build, Push (Docker Hub) and Deploy to Azure Web App - projectsugarglider-backend
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build_push_deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          registry: docker.io
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: |
+            docker.io/kts5927/projectsugarglider:latest
+            docker.io/kts5927/projectsugarglider:${{ github.sha }}
+
+      - name: Login to Azure
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_2B5DC7B6B5CC44518607FF1B8A2C5A94 }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_5536F6B326D34D309E5E6BE4535E78FE }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_25C0896B39B040358BD0B0365A07098F }}
+
+      - name: Deploy to Azure Web App
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: 'projectsugarglider-backend'
+          slot-name: 'Production'
+          images: 'docker.io/kts5927/projectsugarglider:${{ github.sha }}'
