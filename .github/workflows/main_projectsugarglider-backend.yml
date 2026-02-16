@@ -33,7 +33,7 @@ jobs:
         with:
           context: .
           push: true
-          tags: docker.io/${{ secrets.AZUREAPPSERVICE_CONTAINERUSERNAME_3BD712B8061C40CD8038BC6186F2D829 }}/kts5927/projectsugarglider:${{ github.sha }}
+          tags: docker.io/kts5927/projectsugarglider:${{ github.sha }}
           file: ./Dockerfile
 
   deploy:
@@ -60,4 +60,5 @@ jobs:
           app-name: 'projectsugarglider-backend'
           slot-name: 'Production'
           images: 'docker.io/${{ secrets.AZUREAPPSERVICE_CONTAINERUSERNAME_3BD712B8061C40CD8038BC6186F2D829 }}/kts5927/projectsugarglider:${{ github.sha }}'
+
           
