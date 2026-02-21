@@ -46,7 +46,6 @@ dependencies {
 	implementation "org.flywaydb:flyway-database-postgresql:10.15.2"
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
     implementation 'org.springframework.boot:spring-boot-starter-cache'
-    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 
 	
 	testCompileOnly 'org.projectlombok:lombok'

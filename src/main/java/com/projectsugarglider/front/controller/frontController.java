@@ -37,18 +37,6 @@ public class frontController{
     public record EntpReq(String entpId) {}
 
     /**
-     * Front Main Page
-     * 
-     * @param model
-     * @return
-     */
-    @GetMapping("/")
-    public String main(Model model) {
-
-        return "main"; 
-    }
-
-    /**
      * Front Weather(일기예보) Page
      * 
      * @param model
