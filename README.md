@@ -15,7 +15,7 @@
 
 ## 🛠️ 기술 스택
 - **Language / Framework**: Java 21, Spring Boot 3.x  
-- **Database**: PostgreSQL (RDS), Redis  
+- **Database**: PostgreSQL (RDS), caffein, Redis(추후 확장 가능성)  
 - **API 연계**: 공공데이터포털, KEPCO  
 - **Build / Tools**: Gradle, JUnit5, RestAssured, Postman  
 
@@ -53,8 +53,9 @@ src/main/java/com/projectsugarglider
 - 잘못된 데이터는 로그 적재 + 예외 처리  
 
 ### 4. 캐싱
-- Redis In-Memory Cache 적용  
+- caffein Cache 적용  
 - 반복 조회 API 응답 속도 개선, DB 부하 완화  
+- 추후 인스턴스 확장 시 Redis를 L2캐시로 활용
 
 ### 5. 에러 처리
 - 공통 응답 포맷(JSON)으로 클라이언트 일관성 확보  

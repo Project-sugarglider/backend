@@ -44,8 +44,8 @@ dependencies {
     implementation 'org.json:json:20230227'
 	implementation "org.flywaydb:flyway-core:10.15.2"
 	implementation "org.flywaydb:flyway-database-postgresql:10.15.2"
-	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
     implementation 'org.springframework.boot:spring-boot-starter-cache'
+    implementation 'com.github.ben-manes.caffeine:caffeine'
 
 	
 	testCompileOnly 'org.projectlombok:lombok'
