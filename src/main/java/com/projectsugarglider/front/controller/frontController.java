@@ -2,6 +2,7 @@ package com.projectsugarglider.front.controller;
 
 import java.util.List;
 
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -42,6 +43,8 @@ public class frontController{
      * @param model
      * @return
      */
+    // TODO: 캐싱을 적용하였지만 추후 짧은 캐싱간격을 두도록 설정 필요
+    @Cacheable(value = "weather", key = "'default'")
     @GetMapping("/weather")
     public String dashboard(Model model) {
 
@@ -65,6 +68,7 @@ public class frontController{
      * @return
      */
     @ResponseBody
+    @Cacheable(value = "temperature", key = "#req.upper + '-' + #req.lower")
     @PostMapping("/api/chart/tmp")
     public TemperatureResponseDto temperature(@RequestBody RegionPickRequest req){
         log.info("{},{}",req.upper,req.lower);
@@ -79,6 +83,7 @@ public class frontController{
      */
     // TODO: 상품의 종류, 검색기능 추가
     @ResponseBody
+    @Cacheable(value = "kcaStoreInfoCache", key = "#req.entpId")
     @PostMapping("/api/table/KcaPriceInfoByEntpId")
     public List<KcaPriceResponseDto> priceInfo(@RequestBody EntpReq req){
         log.info("{}",req);
@@ -92,6 +97,7 @@ public class frontController{
      * @return
      */
     @ResponseBody
+    @Cacheable(value = "storeLocationCache", key = "#req.upper + '-' + #req.lower")
     @PostMapping("/api/table/map")
     public List<KcaStoreInfoResponseDto> storeLocationInfo(@RequestBody RegionPickRequest req){
         log.info("{}",req);
@@ -105,6 +111,7 @@ public class frontController{
      * @return
      */
     @GetMapping("/kca")
+    @Cacheable(value = "kca", key = "'default'")
     public String kepco(Model model) {
 
         String upper = "경기도";

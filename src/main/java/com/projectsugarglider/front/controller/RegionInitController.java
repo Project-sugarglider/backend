@@ -1,5 +1,6 @@
 package com.projectsugarglider.front.controller;
 
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -13,7 +14,7 @@ import lombok.RequiredArgsConstructor;
 public class RegionInitController {
 
     private final LocationDataInsert location;
-
+    @Cacheable(cacheNames = "regioninitCache")
     @GetMapping("/api/region/init")
     public RegionInitResponseDto regionInit(){
         return location.regionInit();

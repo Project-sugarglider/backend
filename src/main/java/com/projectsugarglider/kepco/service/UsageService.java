@@ -4,7 +4,6 @@ import java.time.OffsetDateTime;
 import java.time.YearMonth;
 import java.util.List;
 
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import com.projectsugarglider.datainitialize.repository.UpperLocationCodeRepository;
@@ -67,10 +66,6 @@ public class UsageService {
     /**
      * KEPCO(한전) 작년 같은달의 데이터 호출 서비스.
      */
-    @Cacheable(
-      value = "lastYearUsage",
-      key = "'KepcoUsageCall'"
-    )
     public List<KepcoUsageDto> getLastYearSameMonthUsage() {
         YearMonth last = YearMonth.now().minusYears(1);
         String y = String.valueOf(last.getYear());

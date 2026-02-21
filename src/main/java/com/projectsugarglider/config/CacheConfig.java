@@ -26,7 +26,9 @@ public class CacheConfig extends CachingConfigurerSupport {
     public CacheManager cacheManager() {
         CaffeineCacheManager cacheManager = new CaffeineCacheManager(
                 "regionInitCache",
-                "storeLocationCache"
+                "storeLocationCache",
+                "weather",
+                "kcaStoreInfoCache"
         );
         cacheManager.setCaffeine(caffeineConfig());
         return cacheManager;
