@@ -4,8 +4,6 @@ import java.util.List;
 
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -36,30 +34,6 @@ public class frontController{
 
     public record RegionPickRequest (String upper,  String lower) {}
     public record EntpReq(String entpId) {}
-
-    /**
-     * Front Weather(일기예보) Page
-     * 
-     * @param model
-     * @return
-     */
-    // TODO: 캐싱을 적용하였지만 추후 짧은 캐싱간격을 두도록 설정 필요
-    @Cacheable(value = "weather", key = "'default'")
-    @GetMapping("/weather")
-    public String dashboard(Model model) {
-
-        String upper = "경기도";
-        String lower = "가평";
-    
-        TemperatureResponseDto dto = check.service(upper, lower);
-        model.addAttribute("labels", dto.labels());
-        model.addAttribute("data", dto.data());
-        model.addAttribute("datasetLabel", dto.datasetLabel());
-    
-        location.dataSave(model);
-    
-        return "weather"; 
-    }
 
     /**
      * 선택된 지역의 일기예보 데이터 반환
@@ -103,31 +77,5 @@ public class frontController{
         log.info("{}",req);
         return storeInfo.service(req.upper, req.lower);
     }
-
-    /**
-     * Front Kca(생필품) Page
-     * 
-     * @param model
-     * @return
-     */
-    @GetMapping("/kca")
-    @Cacheable(value = "kca", key = "'default'")
-    public String kepco(Model model) {
-
-        String upper = "경기도";
-        String lower = "가평";
-
-        TemperatureResponseDto dto = check.service(upper, lower);
-        model.addAttribute("labels", dto.labels());
-        model.addAttribute("data", dto.data());
-        model.addAttribute("datasetLabel", dto.datasetLabel());
-    
-        location.dataSave(model);
-
-        return "kca"; 
-    }
-
-
-
 
 }
