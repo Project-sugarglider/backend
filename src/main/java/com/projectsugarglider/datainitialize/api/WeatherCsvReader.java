@@ -27,7 +27,7 @@ public class WeatherCsvReader {
      */
     public List<WeatherCommonDto> baseDataCall() {
         try (CSVReaderHeaderAware reader = new CSVReaderHeaderAware(
-                new InputStreamReader(new ClassPathResource("기상청데이터.csv").getInputStream(), "UTF-8")
+                new InputStreamReader(new ClassPathResource("LocationData.csv").getInputStream(), "UTF-8")
         )) {
                 List<WeatherCommonDto> result = new ArrayList<>();
                 Map<String, String> line;
