@@ -43,36 +43,20 @@ public class GenericExternalApiService {
      * @return              DTO 리스트
      */
     public <T> List<T> getCall(
-        String baseUrl,
-        Map<String, String> queryParams,
-        Class<T[]> responseType,
-        boolean isXml,
-        String dataNodePath
-) {
-    String url = buildUrl(baseUrl, queryParams);
+            String baseUrl,
+            Map<String, String> queryParams,
+            Class<T[]> responseType,
+            boolean isXml,
+            String dataNodePath
+    ) {
+        String url    = buildUrl(baseUrl, queryParams);
+        // log.info("▶▶▶ calling URL = {}", url);
 
-    log.info("[ExternalApi][REQ] baseUrl={}", baseUrl);
-    log.info("[ExternalApi][REQ] queryParams={}", queryParams);
-    log.info("[ExternalApi][REQ] finalUrl={}", url);
-    log.info("[ExternalApi][REQ] responseType={}, isXml={}, dataNodePath={}",
-        responseType.getName(), isXml, dataNodePath);
-
-    String raw = doRequest(url); // 기존 방식 유지
-
-    JsonNode root = parseRaw(raw, isXml);
-    JsonNode data = extractDataNode(root, dataNodePath);
-
-    log.info("[ExternalApi][PARSE] dataNodePath={}, isMissingNode={}, isArray={}",
-        dataNodePath,
-        data == null || data.isMissingNode(),
-        data != null && data.isArray());
-
-    List<T> result = convertToDto(data, responseType);
-
-    log.info("[ExternalApi][DTO] resultSize={}", result.size());
-
-    return result;
-}
+        String raw    = doRequest(url); // 기존 방식 유지
+        JsonNode root = parseRaw(raw, isXml);
+        JsonNode data = extractDataNode(root, dataNodePath);
+        return convertToDto(data, responseType);
+    }
 
     /**
      * 외부 API 호출을 헤더를 포함해서 범용으로 처리합니다. 
@@ -87,38 +71,21 @@ public class GenericExternalApiService {
      * @return              DTO 리스트
      */
     public <T> List<T> getCall(
-        String baseUrl,
-        Map<String, String> queryParams,
-        Class<T[]> responseType,
-        boolean isXml,
-        String dataNodePath,
-        Map<String, String> headers
-) {
-    String url = buildUrl(baseUrl, queryParams);
+            String baseUrl,
+            Map<String, String> queryParams,
+            Class<T[]> responseType,
+            boolean isXml,
+            String dataNodePath,
+            Map<String, String> headers
+    ) {
+        String url    = buildUrl(baseUrl, queryParams);
+        // log.info("▶▶▶ calling URL = {}", url);
 
-    log.info("[ExternalApi][REQ] baseUrl={}", baseUrl);
-    log.info("[ExternalApi][REQ] queryParams={}", queryParams);
-    log.info("[ExternalApi][REQ] headers={}", headers);
-    log.info("[ExternalApi][REQ] finalUrl={}", url);
-    log.info("[ExternalApi][REQ] responseType={}, isXml={}, dataNodePath={}",
-        responseType.getName(), isXml, dataNodePath);
-
-    String raw = doRequest(url, headers); // 헤더 버전
-
-    JsonNode root = parseRaw(raw, isXml);
-    JsonNode data = extractDataNode(root, dataNodePath);
-
-    log.info("[ExternalApi][PARSE] dataNodePath={}, isMissingNode={}, isArray={}",
-        dataNodePath,
-        data == null || data.isMissingNode(),
-        data != null && data.isArray());
-
-    List<T> result = convertToDto(data, responseType);
-
-    log.info("[ExternalApi][DTO] resultSize={}", result.size());
-
-    return result;
-}
+        String raw    = doRequest(url, headers); // 헤더 버전
+        JsonNode root = parseRaw(raw, isXml);
+        JsonNode data = extractDataNode(root, dataNodePath);
+        return convertToDto(data, responseType);
+    }
 
     /**
      * Url을 build합니다.
@@ -172,22 +139,9 @@ public class GenericExternalApiService {
         if (headers != null) {
             headers.forEach(httpHeaders::add);
         }
-    
         HttpEntity<Void> entity = new HttpEntity<>(httpHeaders);
-    
-        log.info("[ExternalApi][HTTP] method=GET");
-        log.info("[ExternalApi][HTTP] url={}", url);
-        log.info("[ExternalApi][HTTP] requestHeaders={}", httpHeaders);
-    
         ResponseEntity<String> resp = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
-    
-        String body = resp.getBody();
-    
-        log.info("[ExternalApi][HTTP] responseStatus={}", resp.getStatusCode().value());
-        log.info("[ExternalApi][HTTP] responseHeaders={}", resp.getHeaders());
-        log.info("[ExternalApi][HTTP] responseBody={}", body);
-    
-        return body;
+        return resp.getBody();
     }
 
     /**
@@ -206,7 +160,6 @@ public class GenericExternalApiService {
                 ? xmlMapper.readTree(raw)
                 : objectMapper.readTree(raw);
         } catch (IOException e) {
-            log.error("[ExternalApi][PARSE-ERROR] isXml={}, raw={}", isXml, raw, e);
             throw new UncheckedIOException("파싱 실패: " + raw, e);
         }
     }
