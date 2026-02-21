@@ -10,11 +10,9 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
-    // TODO : 배포할때 보안설정 꼭 하기
-
     /**
-     * Security 설정입니다. Localhost에서 작동하기 때문에
-     * 보안설정을 사용하지 않습니다. 추후 배포시 추가적인 설정이 필요합니다.
+     * Security 설정입니다. 
+     * Cors 관련 설정은 별도의 config 파일에 작성되었습니다.
      * 
      * @param http
      * @return
