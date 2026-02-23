@@ -1,6 +1,5 @@
 ALTER TABLE kca_call_history
-ADD COLUMN good_inspect_day varchar(8);
-
+ADD COLUMN IF NOT EXISTS good_inspect_day VARCHAR(8);
 
 UPDATE kca_call_history
 SET good_inspect_day = kca_call_day
