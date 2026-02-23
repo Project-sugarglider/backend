@@ -192,9 +192,24 @@ public class LocationDataFix {
                 target, success, fail, error, skip, db.size());
     }
     
-    private boolean needUpdate(KcaStoreInfoEntity record) {
-        return record.getXMapCoord() == null || "1".equals(record.getXMapCoord());
+private boolean needUpdate(KcaStoreInfoEntity record) {
+    String x = record.getXMapCoord();
+    String y = record.getYMapCoord();
+
+    if (x == null || "1".equals(x)) return true;
+    if (y == null || "1".equals(y)) return true;
+
+    try {
+        double xd = Double.parseDouble(x);
+        double yd = Double.parseDouble(y);
+
+        boolean normal = looksLikeLng(xd) && looksLikeLat(yd);
+
+        return !normal;
+    } catch (NumberFormatException e) {
+        return true;
     }
+}
     
     /**
      * true  => 좌표 업데이트 성공
