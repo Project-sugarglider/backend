@@ -12,7 +12,6 @@ import com.projectsugarglider.front.dto.KcaPriceResponseDto;
 import com.projectsugarglider.front.dto.KcaStoreInfoResponseDto;
 import com.projectsugarglider.front.dto.TemperatureResponseDto;
 import com.projectsugarglider.front.service.KcaCallHistoryCheck;
-import com.projectsugarglider.front.service.LocationDataInsert;
 import com.projectsugarglider.front.service.WeatherCallHistoryCheck;
 import com.projectsugarglider.kca.service.KcaStoreInfoResponseService;
 
@@ -27,7 +26,6 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class frontController{
 
-    private final LocationDataInsert location;
     private final KcaStoreInfoResponseService storeInfo;
     private final WeatherCallHistoryCheck check;
     private final KcaCallHistoryCheck kcaCheck;
