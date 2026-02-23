@@ -132,7 +132,26 @@ public class DateTime {
     public Date timeDate(OffsetDateTime dateTime){
         return Date.from(dateTime.toInstant());
     }
-    
+    // TODO : 시간 채크(이번주 시작이 아닌 지난 금요일을 기준으로
+    public java.util.List<String> recentFridayCandidates(int weeks) {
+        LocalDate todayKst = kstNow().toLocalDate();
+
+        // "이번 주 금요일" 기준(월요일 시작 주)
+        LocalDate currentWeekMonday = todayKst.with(java.time.temporal.TemporalAdjusters.previousOrSame(java.time.DayOfWeek.MONDAY));
+        LocalDate currentWeekFriday = currentWeekMonday.plusDays(4);
+
+        // 아직 금요일 전이면 지난주 금요일부터 시작
+        if (todayKst.isBefore(currentWeekFriday)) {
+            currentWeekFriday = currentWeekFriday.minusWeeks(1);
+        }
+
+        java.util.List<String> list = new java.util.ArrayList<>();
+        for (int i = 0; i < weeks; i++) {
+            list.add(currentWeekFriday.minusWeeks(i).format(YYYYMMDD));
+        }
+        return list;
+    }
+
     //TODO : 하나로 합치기
     /**
      * 1주전 금요일(월요일 시작 주 기준)을 KST 기준 YYYYMMDD 문자열로 반환

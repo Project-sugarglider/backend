@@ -10,6 +10,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import com.projectsugarglider.front.dto.KcaPriceResponseDto;
+import com.projectsugarglider.front.dto.KcaPriceWeeklyResponseDto;
 import com.projectsugarglider.kca.entity.KcaPriceInfoEntity;
 import com.projectsugarglider.kca.entity.KcaProductInfoEntity;
 import com.projectsugarglider.kca.repository.KcaPriceInfoRepository;
@@ -51,20 +52,28 @@ public class kcaPriceResponseService {
      */
     public List<KcaPriceResponseDto> listByEntpId(String entpId) {
         List<KcaPriceInfoEntity> rows = priceInfo.findByEntpId(entpId);
+        return mapRows(rows);
+    }
+
+    public KcaPriceWeeklyResponseDto listByEntpIdAndInspectDay(String entpId, String goodInspectDay) {
+        List<KcaPriceInfoEntity> rows = priceInfo.findByEntpIdAndGoodInspectDay(entpId, goodInspectDay);
+        return new KcaPriceWeeklyResponseDto(goodInspectDay, mapRows(rows));
+    }
+
+
+    private List<KcaPriceResponseDto> mapRows(List<KcaPriceInfoEntity> rows) {
         Map<String, String> nameMap = productNameHash();
 
         return rows.stream()
-                .map(e -> new KcaPriceResponseDto(
-                        nameMap.getOrDefault(e.getGoodId(), e.getGoodId()),                 // good_name
-                        e.getGoodPrice() == null ? null : String.valueOf(e.getGoodPrice()), // good_price
-                        e.getPlusoneYn(),                                                   // plusone_yn
-                        formatDiscountPeriod(e.getGoodDcStartDay(), e.getGoodDcEndDay())    // date
-                ))
-                .sorted(Comparator.comparing(KcaPriceResponseDto::good_name,
-                        Comparator.nullsLast(String::compareTo)))
-                .collect(Collectors.toList());
+            .map(e -> new KcaPriceResponseDto(
+                nameMap.getOrDefault(e.getGoodId(), e.getGoodId()),
+                e.getGoodPrice() == null ? null : String.valueOf(e.getGoodPrice()),
+                e.getPlusoneYn(),
+                formatDiscountPeriod(e.getGoodDcStartDay(), e.getGoodDcEndDay())
+            ))
+            .sorted(Comparator.comparing(KcaPriceResponseDto::good_name, Comparator.nullsLast(String::compareTo)))
+            .collect(Collectors.toList());
     }
-
     
     /**
      * 할인 날짜 포맷 변경

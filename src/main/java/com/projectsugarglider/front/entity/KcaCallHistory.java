@@ -33,4 +33,8 @@ public class KcaCallHistory {
     @Column(name = "entp_id")
     private String entpId;
 
+    @Id
+    @Column(name = "good_inspect_day", length = 8)
+    private String goodInspectDay;
+
 }

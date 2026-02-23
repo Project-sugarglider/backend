@@ -6,8 +6,11 @@ import com.projectsugarglider.front.entity.KcaCallHistory;
 
 public interface  KcaCallHistoryRepository extends JpaRepository<KcaCallHistory, String>{
     
-    boolean existsByKcaCallDayAndEntpId(
-        String kcaCallDay, String entpId
+    boolean existsByKcaCallDayAndEntpIdAndGoodInspectDay(
+        String kcaCallDay,
+        String entpId, 
+        String goodInspectDay
     );
+
 
 }

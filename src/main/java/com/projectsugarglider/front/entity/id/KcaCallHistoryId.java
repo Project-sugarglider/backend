@@ -15,4 +15,5 @@ import lombok.NoArgsConstructor;
 public class KcaCallHistoryId implements Serializable {
     private String kcaCallDay;
     private String entpId;
+    private String goodInspectDay;
 }

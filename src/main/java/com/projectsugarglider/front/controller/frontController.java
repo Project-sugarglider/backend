@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.projectsugarglider.front.dto.KcaPriceResponseDto;
+import com.projectsugarglider.front.dto.KcaPriceWeeklyResponseDto;
 import com.projectsugarglider.front.dto.KcaStoreInfoResponseDto;
 import com.projectsugarglider.front.dto.TemperatureResponseDto;
 import com.projectsugarglider.front.service.KcaCallHistoryCheck;
@@ -57,7 +57,7 @@ public class frontController{
     @ResponseBody
     @Cacheable(value = "kcaStoreInfoCache", key = "#req.entpId")
     @PostMapping("/api/table/KcaPriceInfoByEntpId")
-    public List<KcaPriceResponseDto> priceInfo(@RequestBody EntpReq req){
+    public KcaPriceWeeklyResponseDto priceInfo(@RequestBody EntpReq req){
         log.info("{}",req);
         return kcaCheck.service(req.entpId);
     }
