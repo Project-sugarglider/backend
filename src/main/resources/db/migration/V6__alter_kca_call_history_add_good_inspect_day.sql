@@ -8,8 +8,5 @@ WHERE good_inspect_day IS NULL;
 ALTER TABLE kca_call_history
 ALTER COLUMN good_inspect_day SET NOT NULL;
 
-ALTER TABLE kca_call_history DROP CONSTRAINT kca_call_history_pkey;
-
-ALTER TABLE kca_call_history
-ADD CONSTRAINT kca_call_history_pkey
-PRIMARY KEY (kca_call_day, entp_id, good_inspect_day);
+CREATE UNIQUE INDEX IF NOT EXISTS ux_kca_call_history_call_entp_inspect
+ON kca_call_history (kca_call_day, entp_id, good_inspect_day);
