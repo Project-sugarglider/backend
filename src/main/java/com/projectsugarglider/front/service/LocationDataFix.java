@@ -291,6 +291,7 @@ private boolean needUpdate(KcaStoreInfoEntity record) {
             y
         );
     
+        log.info("업데이트 성공: entp='{}' -> ({}, {})", record.getEntpName(), x, y);
         return true;
     }
     
