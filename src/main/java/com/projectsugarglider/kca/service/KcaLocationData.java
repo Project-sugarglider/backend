@@ -51,7 +51,6 @@ public class KcaLocationData {
     @Transactional
     public void insertData(){
         for(TripleList data : codes){
-            log.info("update Data = {},{},{}",data.first(), data.second(), data.third());
             repo.updateKcaCodeByKey(data.first(), data.second(), data.third());
         }
     }

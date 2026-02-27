@@ -28,7 +28,6 @@ public class GlobalExceptionHandler {
     ) {
         HttpStatus status = HttpStatus.METHOD_NOT_ALLOWED;
 
-        // 스택트레이스 X (ex를 파라미터로 넘기지 않음)
         log.warn("HTTP {} {} -> {} ({})",
                 request.getMethod(),
                 request.getRequestURI(),
@@ -67,12 +66,10 @@ public class GlobalExceptionHandler {
             DataIntegrityViolationException ex,
             HttpServletRequest request
     ) {
-        // FK/UK/PK 위반 같은 경우는 보통 409(충돌)로 많이 줌
         HttpStatus status = HttpStatus.CONFLICT;
 
         String message = pickMostUsefulMessage(ex);
 
-        // 여기서도 스택트레이스는 기본적으로 안 찍고 "요약 1줄"만
         log.warn("HTTP {} {} -> {} (db: {})",
                 request.getMethod(),
                 request.getRequestURI(),
@@ -80,7 +77,6 @@ public class GlobalExceptionHandler {
                 message
         );
 
-        // 디버그 필요할 때만 자세히 보고 싶으면 이 라인만 켜면 됨(기본은 off)
         log.debug("DataIntegrityViolationException detail", ex);
 
         return ResponseEntity.status(status).body(build(status, message, request));
@@ -106,7 +102,7 @@ public class GlobalExceptionHandler {
     }
 
     private ApiErrorResponseRecord build(HttpStatus status, String message, HttpServletRequest request) {
-        String requestId = MDC.get("requestId"); // 네 RequestIdFilter가 MDC에 넣는 키가 이거라고 가정
+        String requestId = MDC.get("requestId"); 
         return new ApiErrorResponseRecord(
                 Instant.now(),
                 status.value(),
@@ -125,7 +121,6 @@ public class GlobalExceptionHandler {
     }
 
     private String pickMostUsefulMessage(DataIntegrityViolationException ex) {
-        // 보통 root cause에 PSQLException 메시지가 들어있어서 그게 제일 쓸모있음
         Throwable root = ex;
         while (root.getCause() != null && root.getCause() != root) {
             root = root.getCause();
@@ -137,7 +132,6 @@ public class GlobalExceptionHandler {
         if (msg == null) {
             return "Data integrity violation";
         }
-        // 너무 길면 1줄 요약 느낌으로 잘라주기(원하면 길이 조절)
         msg = msg.replace("\n", " ").replace("\r", " ");
         if (msg.length() > 400) {
             msg = msg.substring(0, 400) + "...";
