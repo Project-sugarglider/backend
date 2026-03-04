@@ -23,6 +23,7 @@ public class CacheConfig extends CachingConfigurerSupport {
     }
 
     @Bean
+    @Override
     public CacheManager cacheManager() {
         CaffeineCacheManager cacheManager = new CaffeineCacheManager(
                 "temperature",
