@@ -13,6 +13,7 @@ import com.projectsugarglider.kca.dto.KcaStoreInfoDto;
 import com.projectsugarglider.kca.entity.KcaStoreInfoEntity;
 import com.projectsugarglider.kca.repository.StoreInfoRepository;
 
+import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,12 +27,14 @@ public class KcaStoreInfoSaveService {
     private final StoreInfoRepository storeInfoRepository;
     private final UpperLocationCodeRepository upperRepository;
     private final LowerLocationCodeRepository lowerRepository;
-
+private final EntityManager entityManager;
     /**
      * 소비자원 업체 기본 정보를 저장합니다.
      */
     @Transactional
     public void saveStoreInfoData() {
+        entityManager.flush();
+        entityManager.clear();
 
         List<KcaStoreInfoDto> raw = storeInfoApi.StoreInfoCall();
         Map<String, String> upperKeyByKca = getUpperKey();
