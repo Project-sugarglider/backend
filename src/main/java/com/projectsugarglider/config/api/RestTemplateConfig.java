@@ -1,4 +1,4 @@
-package com.projectsugarglider.config;
+package com.projectsugarglider.config.api;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;

@@ -1,4 +1,4 @@
-package com.projectsugarglider.config;
+package com.projectsugarglider.config.api;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;

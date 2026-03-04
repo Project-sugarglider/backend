@@ -1,4 +1,4 @@
-package com.projectsugarglider.config;
+package com.projectsugarglider.config.api;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

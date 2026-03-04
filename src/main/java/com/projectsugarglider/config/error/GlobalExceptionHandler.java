@@ -1,4 +1,4 @@
-package com.projectsugarglider.config;
+package com.projectsugarglider.config.error;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
@@ -12,6 +12,8 @@ import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+import com.projectsugarglider.config.api.ApiErrorResponseRecord;
 
 import java.time.Instant;
 import java.util.stream.Collectors;

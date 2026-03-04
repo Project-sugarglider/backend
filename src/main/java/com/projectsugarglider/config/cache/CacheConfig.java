@@ -1,4 +1,4 @@
-package com.projectsugarglider.config;
+package com.projectsugarglider.config.cache;
 
 import java.util.concurrent.TimeUnit;
 
