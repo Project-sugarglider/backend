@@ -1,4 +1,4 @@
-package com.projectsugarglider.global.config;
+package com.projectsugarglider.config.global;
 
 import java.util.concurrent.Executor;
 
@@ -14,9 +14,9 @@ public class AsyncConfig {
     @Bean(name = "locationFixExecutor")
     public Executor locationFixExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setCorePoolSize(5);
-        executor.setMaxPoolSize(10);
-        executor.setQueueCapacity(100);
+        executor.setCorePoolSize(10);
+        executor.setMaxPoolSize(20);
+        executor.setQueueCapacity(500);
         executor.setThreadNamePrefix("location-fix-");
         executor.initialize();
         return executor;

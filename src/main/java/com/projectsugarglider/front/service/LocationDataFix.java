@@ -34,38 +34,64 @@ public class LocationDataFix {
     public void service() {
         List<KcaStoreInfoEntity> db = storeRepo.findAll();
 
-        int target = 0;   // needUpdate 대상 개수
-        int success = 0;  // 좌표 업데이트 성공
-        int fail = 0;     // 매칭 실패(업데이트 못함)
-        int error = 0;    // 처리 중 예외
-        int skip  = 0;    // needUpdate 아님(스킵)
+        int target = 0;
+        int success = 0;
+        int fail = 0;
+        int error = 0;
+        int skip = 0;
 
         List<CompletableFuture<Integer>> futures = new ArrayList<>();
+        int chunkSize = 50;
+        long chunkDelayMs = 100;
 
         for (KcaStoreInfoEntity record : db) {
             if (needUpdate(record)) {
                 target++;
                 futures.add(locationDataFixAsync.processRecordAsync(record));
+
+                if (futures.size() >= chunkSize) {
+                    CompletableFuture.allOf(futures.toArray(CompletableFuture[]::new)).join();
+
+                    for (CompletableFuture<Integer> future : futures) {
+                        int result = future.join();
+                        switch (result) {
+                            case 1 -> success++;
+                            case 0 -> fail++;
+                            default -> error++;
+                        }
+                    }
+
+                    futures.clear();
+                    try {
+                        Thread.sleep(chunkDelayMs);
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                        log.warn("청크 딜레이 중 인터럽트 발생", e);
+                    }
+                }
             } else {
                 skip++;
             }
         }
 
-        CompletableFuture.allOf(futures.toArray(CompletableFuture[]::new)).join();
+        if (!futures.isEmpty()) {
+            CompletableFuture.allOf(futures.toArray(CompletableFuture[]::new)).join();
 
-        for (CompletableFuture<Integer> future : futures) {
-            int result = future.join();
-            switch (result) {
-                case 1 -> success++;
-                case 0 -> fail++;
-                default -> error++;
+            for (CompletableFuture<Integer> future : futures) {
+                int result = future.join();
+                switch (result) {
+                    case 1 -> success++;
+                    case 0 -> fail++;
+                    default -> error++;
+                }
             }
+
+            futures.clear();
         }
 
         log.info("보정 집계 | 대상:{} 성공:{} 실패:{} 오류:{} 스킵:{} (총:{})",
                 target, success, fail, error, skip, db.size());
     }
-
     private boolean needUpdate(KcaStoreInfoEntity record) {
         String x = record.getXMapCoord();
         String y = record.getYMapCoord();

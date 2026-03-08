@@ -26,7 +26,10 @@ public class LocationDataFixAsync {
             }
             return CompletableFuture.completedFuture(0);     // fail
         } catch (Exception e) {
-            log.warn("보정 실패 entp='{}'", record.getEntpName(), e);
+            log.warn("보정 실패 entp='{}', errorType={}, message={}",
+                record.getEntpName(),
+                e.getClass().getName(),
+                e.getMessage());
             return CompletableFuture.completedFuture(-1);    // error
         }
     }
