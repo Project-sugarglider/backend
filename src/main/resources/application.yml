@@ -22,6 +22,11 @@ external:
     searchkeyword: https://dapi.kakao.com/v2/local/search/keyword
     restKey: ${KAKAO_REST_KEY}
 
+project:
+  datafix:
+    chunkSize: 50
+    chunkDelayMs: 50
+
 spring:
   jpa:
     properties:

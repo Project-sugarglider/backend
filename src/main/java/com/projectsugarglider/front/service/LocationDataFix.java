@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,6 +30,12 @@ public class LocationDataFix {
     private final StoreInfoRepository storeRepo;
     private final LocationDataFixAsync locationDataFixAsync;
 
+    @Value("${project.datafix.chunkSize}")
+    private int chunkSize = 50;
+    
+    @Value("${project.datafix.chunkDelayMs}")   
+    private long chunkDelayMs = 100;
+
     // ----------------- 상위: 가져오기 순서 유지 -----------------
     @Transactional
     public void service() {
@@ -41,8 +48,7 @@ public class LocationDataFix {
         int skip = 0;
 
         List<CompletableFuture<Integer>> futures = new ArrayList<>();
-        int chunkSize = 50;
-        long chunkDelayMs = 50;
+
 
         for (KcaStoreInfoEntity record : db) {
             if (needUpdate(record)) {

@@ -108,8 +108,6 @@ public class LocationDataInsert {
             return upperCodes;
         }
 
-        //TODO : 캐싱 추가
-
         /**
          * Lower 데이터를 모두 가져오는 함수
          * 
