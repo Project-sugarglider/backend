@@ -230,7 +230,6 @@ public class LocationDataFixWorker {
             // 파싱 실패면 그냥 원본으로 업데이트 시도(혹은 false 리턴해서 실패 처리해도 됨)
         }
 
-        long updateStart = System.nanoTime();
         storeRepo.updateMapCoordByEntpId(
             record.getEntpId(),
             x,

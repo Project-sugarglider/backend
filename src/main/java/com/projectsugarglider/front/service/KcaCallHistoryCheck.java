@@ -39,21 +39,20 @@ public class KcaCallHistoryCheck {
         
         List<String> candidates = time.recentFridayCandidates(8);
         for (String goodInspectDay : candidates) {
-            String callKey = entpId + ":" + goodInspectDay;
-                if (!repo.existsByKcaCallDayAndEntpIdAndGoodInspectDay(kcaCallDay, entpId, goodInspectDay)) {
-                    KcaCallHistory DTO = KcaCallHistory.builder()
-                        .kcaCallDay(kcaCallDay)
-                        .entpId(entpId)
-                        .goodInspectDay(goodInspectDay)
-                        .build();
+            if (!repo.existsByKcaCallDayAndEntpIdAndGoodInspectDay(kcaCallDay, entpId, goodInspectDay)) {
+                KcaCallHistory DTO = KcaCallHistory.builder()
+                    .kcaCallDay(kcaCallDay)
+                    .entpId(entpId)
+                    .goodInspectDay(goodInspectDay)
+                    .build();
 
-                    repo.save(DTO);
+                repo.save(DTO);
 
-                    price.SavePriceInfoData(entpId, goodInspectDay);
-                }
-                if (priceRepo.existsByEntpIdAndGoodInspectDay(entpId, goodInspectDay)) {
-                    return response.listByEntpIdAndInspectDay(entpId, goodInspectDay);
-                }
+                price.SavePriceInfoData(entpId, goodInspectDay);
+            }
+            if (priceRepo.existsByEntpIdAndGoodInspectDay(entpId, goodInspectDay)) {
+                return response.listByEntpIdAndInspectDay(entpId, goodInspectDay);
+            }
         }
 
         return new KcaPriceWeeklyResponseDto(null, List.of());
