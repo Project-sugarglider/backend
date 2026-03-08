@@ -42,7 +42,7 @@ public class LocationDataFix {
 
         List<CompletableFuture<Integer>> futures = new ArrayList<>();
         int chunkSize = 50;
-        long chunkDelayMs = 100;
+        long chunkDelayMs = 50;
 
         for (KcaStoreInfoEntity record : db) {
             if (needUpdate(record)) {
@@ -62,12 +62,7 @@ public class LocationDataFix {
                     }
 
                     futures.clear();
-                    try {
-                        Thread.sleep(chunkDelayMs);
-                    } catch (InterruptedException e) {
-                        Thread.currentThread().interrupt();
-                        log.warn("청크 딜레이 중 인터럽트 발생", e);
-                    }
+                    delayChunk(chunkDelayMs);
                 }
             } else {
                 skip++;
@@ -91,6 +86,15 @@ public class LocationDataFix {
 
         log.info("보정 집계 | 대상:{} 성공:{} 실패:{} 오류:{} 스킵:{} (총:{})",
                 target, success, fail, error, skip, db.size());
+    }
+
+    private void delayChunk(long chunkDelayMs) {
+        try {
+            Thread.sleep(chunkDelayMs);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            log.warn("청크 딜레이 중 인터럽트 발생", e);
+        }
     }
     private boolean needUpdate(KcaStoreInfoEntity record) {
         String x = record.getXMapCoord();
