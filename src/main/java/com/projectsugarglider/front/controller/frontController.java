@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -32,6 +33,11 @@ public class frontController{
 
     public record RegionPickRequest (String upper,  String lower) {}
     public record EntpReq(String entpId) {}
+
+    @GetMapping("/")
+    public String home() {
+        return "ok";
+    }
 
     /**
      * 선택된 지역의 일기예보 데이터 반환
