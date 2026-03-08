@@ -1,57 +1,80 @@
 package com.projectsugarglider.kca.service;
 
+import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import com.opencsv.CSVReaderHeaderAware;
 import com.projectsugarglider.datainitialize.repository.LowerLocationCodeRepository;
 import com.projectsugarglider.util.dto.TripleList;
 
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-/**
- * KCA(소비자원) 지역 데이터 업데이트용 서비스.
- */
 @Service
 @Slf4j
 @RequiredArgsConstructor
 public class KcaLocationData {
 
     private final LowerLocationCodeRepository repo;
-    
-    //TODO : 하드코딩이 아닌 지역데이터 저장할때 변환로직으로 바꾸기
-    List<TripleList> codes = List.of(
-        new TripleList("경기도",   "고양시일산동", "08000"),
-        new TripleList("경기도",   "고양시일산서", "08000"),
-        new TripleList("충청북도", "청주시상당",  "07000"),
-        new TripleList("충청북도", "청주시흥덕",  "07000"),
-        new TripleList("충청북도", "청주시청원",  "07000"),
-        new TripleList("충청북도", "청주시서원",  "07000"),
-        new TripleList("충청남도", "천안시동남",  "06000"),
-        new TripleList("충청남도", "천안시서북",  "06000"),
-        new TripleList("경기도",   "용인시처인",  "29000"),
-        new TripleList("경기도",   "안산시단원",  "28000"),
-        new TripleList("경기도",   "용인시기흥",  "29000"),
-        new TripleList("경기도",   "용인시수지",  "29000"),
-        new TripleList("경기도",   "안산시상록",  "28000"),
-        new TripleList("경상남도", "창원시진해",  "12000"),
-        new TripleList("경상남도", "창원시마산합포", "12000"),
-        new TripleList("경상남도", "창원시마산회원", "12000"),
-        new TripleList("경상남도", "창원시의창",  "12000"),
-        new TripleList("경상남도", "창원시성산",  "12000"),
-        new TripleList("인천광역시", "미추홀",  "08000")
-
-    );
 
     /**
      * 소비자원 지역 데이터중 지역명이 다른 데이터를 보충합니다.
      */
     @Transactional
-    public void insertData(){
-        for(TripleList data : codes){
+    public void insertData() {
+        List<TripleList> codes = baseDataCall();
+
+        for (TripleList data : codes) {
             repo.updateKcaCodeByKey(data.first(), data.second(), data.third());
+        }
+    }
+
+    /**
+     * 소비자원 지역명 보정 데이터를 호출합니다.
+     *
+     * 데이터는 API호출이 아닌
+     * main/resources/kca-location-code-patch.csv 의 데이터를 참고합니다.
+     *
+     * @return 지역명 보정 데이터
+     */
+    public List<TripleList> baseDataCall() {
+        try (CSVReaderHeaderAware reader = new CSVReaderHeaderAware(
+                new InputStreamReader(new ClassPathResource("kca-location-code-patch.csv").getInputStream(), "UTF-8")
+        )) {
+            List<TripleList> result = new ArrayList<>();
+            Map<String, String> line;
+
+            while ((line = reader.readMap()) != null) {
+                String upper = line.get("upper");
+                String lower = line.get("lower");
+                String code = line.get("code");
+
+                if (upper == null || upper.isBlank() ||
+                    lower == null || lower.isBlank() ||
+                    code == null || code.isBlank()) {
+                    log.warn("KCA 지역 보정 CSV 스킵 - 필수값 누락: {}", line);
+                    continue;
+                }
+
+                TripleList dto = new TripleList(
+                    upper.trim(),
+                    lower.trim(),
+                    code.trim()
+                );
+                result.add(dto);
+            }
+
+            return result;
+
+        } catch (Exception e) {
+            log.warn("KCA 지역 보정 CSV 읽기 실패", e);
+            return List.of();
         }
     }
 }
