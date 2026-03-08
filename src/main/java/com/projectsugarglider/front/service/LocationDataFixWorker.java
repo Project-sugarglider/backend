@@ -163,35 +163,95 @@ public class LocationDataFixWorker {
      */
     @Transactional
     public boolean processRecord(KcaStoreInfoEntity record) {
-        // 1) entpName으로
+        long processStart = System.nanoTime();
+
+        long apiByNameStart = System.nanoTime();
         List<KakaoPlace> byName = safe(api.localDataCall(record.getEntpName()));
+        long apiByNameEnd = System.nanoTime();
+
         for (KakaoPlace cand : byName) {
             if (isSamePlace(record, cand)) {
-                return method(record, cand); // method()가 true 반환
+                long methodStart = System.nanoTime();
+                boolean result = method(record, cand);
+                long methodEnd = System.nanoTime();
+
+                long processEnd = System.nanoTime();
+
+                log.info("processRecord success(byName) entp='{}' apiByNameMs={} methodMs={} totalMs={} candidateCount={}",
+                        record.getEntpName(),
+                        (apiByNameEnd - apiByNameStart) / 1_000_000,
+                        (methodEnd - methodStart) / 1_000_000,
+                        (processEnd - processStart) / 1_000_000,
+                        byName.size());
+
+                return result;
             }
         }
 
         // 2) road로 (있을 때만)
         if (record.getRoadAddrBasic() != null && !record.getRoadAddrBasic().isBlank()) {
+            long apiByRoadStart = System.nanoTime();
             List<KakaoPlace> byRoad = safe(api.localDataCall(record.getRoadAddrBasic()));
+            long apiByRoadEnd = System.nanoTime();
+
             for (KakaoPlace cand : byRoad) {
                 if (isSamePlace(record, cand)) {
-                    return method(record, cand);
+                    long methodStart = System.nanoTime();
+                    boolean result = method(record, cand);
+                    long methodEnd = System.nanoTime();
+
+                    long processEnd = System.nanoTime();
+
+                    log.info("processRecord success(byRoad) entp='{}' apiByNameMs={} apiByRoadMs={} methodMs={} totalMs={} byNameCandidateCount={} byRoadCandidateCount={}",
+                            record.getEntpName(),
+                            (apiByNameEnd - apiByNameStart) / 1_000_000,
+                            (apiByRoadEnd - apiByRoadStart) / 1_000_000,
+                            (methodEnd - methodStart) / 1_000_000,
+                            (processEnd - processStart) / 1_000_000,
+                            byName.size(),
+                            byRoad.size());
+
+                    return result;
                 }
             }
         }
 
         // 3) plmk로
         if (record.getPlmkAddrBasic() != null && !record.getPlmkAddrBasic().isBlank()) {
+            long apiByPlmkStart = System.nanoTime();
             List<KakaoPlace> byPlmk = safe(api.localDataCall(record.getPlmkAddrBasic()));
+            long apiByPlmkEnd = System.nanoTime();
+
             for (KakaoPlace cand : byPlmk) {
                 if (isSamePlace(record, cand)) {
-                    return method(record, cand);
+                    long methodStart = System.nanoTime();
+                    boolean result = method(record, cand);
+                    long methodEnd = System.nanoTime();
+
+                    long processEnd = System.nanoTime();
+
+                    log.info("processRecord success(byPlmk) entp='{}' apiByNameMs={} apiByPlmkMs={} methodMs={} totalMs={} byNameCandidateCount={} byPlmkCandidateCount={}",
+                            record.getEntpName(),
+                            (apiByNameEnd - apiByNameStart) / 1_000_000,
+                            (apiByPlmkEnd - apiByPlmkStart) / 1_000_000,
+                            (methodEnd - methodStart) / 1_000_000,
+                            (processEnd - processStart) / 1_000_000,
+                            byName.size(),
+                            byPlmk.size());
+
+                    return result;
                 }
             }
         }
 
-        log.info("매칭 실패: entp='{}'", record.getEntpName());
+        long processEnd = System.nanoTime();
+
+        log.info("processRecord fail entp='{}' apiByNameMs={} totalMs={} byNameCandidateCount={}",
+                record.getEntpName(),
+                (apiByNameEnd - apiByNameStart) / 1_000_000,
+                (processEnd - processStart) / 1_000_000,
+                byName.size());
+
         return false;
     }
 
@@ -208,6 +268,7 @@ public class LocationDataFixWorker {
     }
 
     private boolean method(KcaStoreInfoEntity record, KakaoPlace raw) {
+        long methodStart = System.nanoTime();
 
         String x = raw.x();
         String y = raw.y();
@@ -230,12 +291,21 @@ public class LocationDataFixWorker {
             // 파싱 실패면 그냥 원본으로 업데이트 시도(혹은 false 리턴해서 실패 처리해도 됨)
         }
 
+        long updateStart = System.nanoTime();
         storeRepo.updateMapCoordByEntpNameAndPlmkAddrBasic(
             record.getEntpName(),
             record.getPlmkAddrBasic(),
             x,
             y
         );
+        long updateEnd = System.nanoTime();
+
+        long methodEnd = System.nanoTime();
+
+        log.info("updateMapCoord entp='{}' updateMs={} methodTotalMs={}",
+                record.getEntpName(),
+                (updateEnd - updateStart) / 1_000_000,
+                (methodEnd - methodStart) / 1_000_000);
 
         return true;
     }
