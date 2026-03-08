@@ -16,14 +16,12 @@ public interface  StoreInfoRepository extends JpaRepository<KcaStoreInfoEntity, 
     @Modifying(clearAutomatically = true, flushAutomatically = true)
     @Query("""
         UPDATE KcaStoreInfoEntity s
-           SET s.xMapCoord = :xMapCoord,
-               s.yMapCoord = :yMapCoord
-         WHERE s.entpName = :entpName
-           AND s.plmkAddrBasic = :plmkAddrBasic
+        SET s.xMapCoord = :xMapCoord,
+            s.yMapCoord = :yMapCoord
+        WHERE s.entpId = :entpId
     """)
-    int updateMapCoordByEntpNameAndPlmkAddrBasic(
-            @Param("entpName") String entpName,
-            @Param("plmkAddrBasic") String plmkAddrBasic,
+    int updateMapCoordByEntpId(
+            @Param("entpId") String entpId,
             @Param("xMapCoord") String xMapCoord,
             @Param("yMapCoord") String yMapCoord
     );

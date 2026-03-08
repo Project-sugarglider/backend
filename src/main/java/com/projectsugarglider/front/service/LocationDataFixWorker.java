@@ -292,9 +292,8 @@ public class LocationDataFixWorker {
         }
 
         long updateStart = System.nanoTime();
-        storeRepo.updateMapCoordByEntpNameAndPlmkAddrBasic(
-            record.getEntpName(),
-            record.getPlmkAddrBasic(),
+        storeRepo.updateMapCoordByEntpId(
+            record.getEntpId(),
             x,
             y
         );
