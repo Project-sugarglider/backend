@@ -39,7 +39,11 @@ public class LocationDataFix {
     // ----------------- 상위: 가져오기 순서 유지 -----------------
     @Transactional
     public void service() {
+        long serviceStart = System.nanoTime();
+
+        long findAllStart = System.nanoTime();
         List<KcaStoreInfoEntity> db = storeRepo.findAll();
+        long findAllEnd = System.nanoTime();
 
         int target = 0;
         int success = 0;
@@ -47,8 +51,9 @@ public class LocationDataFix {
         int error = 0;
         int skip = 0;
 
-        List<CompletableFuture<Integer>> futures = new ArrayList<>();
+        int chunkIndex = 0;
 
+        List<CompletableFuture<Integer>> futures = new ArrayList<>();
 
         for (KcaStoreInfoEntity record : db) {
             if (needUpdate(record)) {
@@ -56,7 +61,13 @@ public class LocationDataFix {
                 futures.add(locationDataFixAsync.processRecordAsync(record));
 
                 if (futures.size() >= chunkSize) {
+                    chunkIndex++;
+
+                    long chunkStart = System.nanoTime();
+
                     CompletableFuture.allOf(futures.toArray(CompletableFuture[]::new)).join();
+
+                    long joinEnd = System.nanoTime();
 
                     for (CompletableFuture<Integer> future : futures) {
                         int result = future.join();
@@ -67,8 +78,20 @@ public class LocationDataFix {
                         }
                     }
 
+                    long collectEnd = System.nanoTime();
+
                     futures.clear();
+
+                    long delayStart = System.nanoTime();
                     delayChunk(chunkDelayMs);
+                    long delayEnd = System.nanoTime();
+
+                    log.info("LocationDataFix chunk={} size={} joinMs={} collectMs={} delayMs={}",
+                            chunkIndex,
+                            chunkSize,
+                            (joinEnd - chunkStart) / 1_000_000,
+                            (collectEnd - joinEnd) / 1_000_000,
+                            (delayEnd - delayStart) / 1_000_000);
                 }
             } else {
                 skip++;
@@ -76,7 +99,13 @@ public class LocationDataFix {
         }
 
         if (!futures.isEmpty()) {
+            chunkIndex++;
+
+            long chunkStart = System.nanoTime();
+
             CompletableFuture.allOf(futures.toArray(CompletableFuture[]::new)).join();
+
+            long joinEnd = System.nanoTime();
 
             for (CompletableFuture<Integer> future : futures) {
                 int result = future.join();
@@ -87,13 +116,27 @@ public class LocationDataFix {
                 }
             }
 
+            long collectEnd = System.nanoTime();
+
+            log.info("LocationDataFix lastChunk={} size={} joinMs={} collectMs={}",
+                    chunkIndex,
+                    futures.size(),
+                    (joinEnd - chunkStart) / 1_000_000,
+                    (collectEnd - joinEnd) / 1_000_000);
+
             futures.clear();
         }
+
+        long serviceEnd = System.nanoTime();
+
+        log.info("LocationDataFix summary findAllMs={} totalMs={} target={} success={} fail={} error={} skip={} totalCount={}",
+                (findAllEnd - findAllStart) / 1_000_000,
+                (serviceEnd - serviceStart) / 1_000_000,
+                target, success, fail, error, skip, db.size());
 
         log.info("보정 집계 | 대상:{} 성공:{} 실패:{} 오류:{} 스킵:{} (총:{})",
                 target, success, fail, error, skip, db.size());
     }
-
     private void delayChunk(long chunkDelayMs) {
         try {
             Thread.sleep(chunkDelayMs);
