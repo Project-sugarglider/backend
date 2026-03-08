@@ -33,11 +33,11 @@ public class frontController{
 
     public record RegionPickRequest (String upper,  String lower) {}
     public record EntpReq(String entpId) {}
-
+ 
     @ResponseBody
     @GetMapping("/")
     public String home() {
-        return "ok";
+        return "okk";
     }
 
     /**
