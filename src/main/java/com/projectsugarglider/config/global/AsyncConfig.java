@@ -14,9 +14,9 @@ public class AsyncConfig {
     @Bean(name = "locationFixExecutor")
     public Executor locationFixExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setCorePoolSize(10);
-        executor.setMaxPoolSize(20);
-        executor.setQueueCapacity(500);
+        executor.setCorePoolSize(15);
+        executor.setMaxPoolSize(30);
+        executor.setQueueCapacity(50);
         executor.setThreadNamePrefix("location-fix-");
         executor.initialize();
         return executor;
