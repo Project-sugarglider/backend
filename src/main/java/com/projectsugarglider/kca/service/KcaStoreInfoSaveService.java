@@ -33,7 +33,6 @@ private final EntityManager entityManager;
      */
     @Transactional
     public void saveStoreInfoData() {
-        entityManager.flush();
         entityManager.clear();
 
         List<KcaStoreInfoDto> raw = storeInfoApi.StoreInfoCall();
